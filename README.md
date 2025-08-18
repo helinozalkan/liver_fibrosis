@@ -38,6 +38,7 @@ FibroCheck, kullanıcı dostu **web tabanlı bir arayüze** sahiptir:
 * **Ultrason görüntüsü yükleme alanı**
 * **Kan tahlili giriş alanları** (manuel veya otomatik doldurma)
 * **Grafiksel & istatistiksel analizler**
+* **Doktor için özelleşmiş kişisel Doktor Paneli**
 * **Not ekleme ve kişiselleştirme**
 * **Chatbot desteği**
 * **Yardım alanı**
