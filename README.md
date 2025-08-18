@@ -71,16 +71,16 @@ FibroCheck, kullanıcı dostu **web tabanlı bir arayüze** sahiptir:
 ---
 
 ## Proje sahipleri: 
-**Helin ÖZALKAN**
-**Sümeyye AĞIR**
-**Kevser SEMİZ**
-**Büşra İNAN**
-**Devran ŞAHİN**
-**Ege KUZU**
-**Erva ERGÜL**
-**Cengizhan KARAMAN**
-**Kerem GÜNEY**
-**Enes Can ÇOBAN**
+* **Helin ÖZALKAN**
+* **Sümeyye AĞIR**
+* **Kevser SEMİZ**
+* **Büşra İNAN**
+* **Devran ŞAHİN**
+* **Ege KUZU**
+* **Erva ERGÜL**
+* **Cengizhan KARAMAN**
+* **Kerem GÜNEY**
+* **Enes Can ÇOBAN**
 
 ##Geliştirilme amacı: 
 **Klinik karar destek sistemlerine entegre edilebilir, non-invaziv fibrozis evre tahmini**
