@@ -82,5 +82,5 @@ FibroCheck, kullanıcı dostu **web tabanlı bir arayüze** sahiptir:
 * **Kerem GÜNEY**
 * **Enes Can ÇOBAN**
 
-##Geliştirilme amacı: 
+## Geliştirilme amacı: 
 **Klinik karar destek sistemlerine entegre edilebilir, non-invaziv fibrozis evre tahmini**
