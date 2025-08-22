@@ -1,3 +1,8 @@
+// ============================
+// Sonuç ve Rapor Sayfası Bileşeni
+// Kullanıcının fibrozis tahmin raporunu gösterir
+// PDF indirme, rapor kaydetme ve Chatbot entegrasyonu içerir
+// ============================
 import React, { useRef, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./ResultAndReportPage.css";
@@ -5,12 +10,18 @@ import html2pdf from "html2pdf.js";
 import Chatbot from "../components/Chatbot";
 import Markdown from "markdown-to-jsx"; 
 
-
 const ResultAndReportPage = () => {
+  // ============================
+  // Ref ve State Tanımlamaları
+  // reportRef: PDF için referans
+  // reportSent: raporun servera gönderilip gönderilmediği
+  // retryCount: yeniden deneme sayacı
+  // hastaVerisi: router üzerinden gelen hasta verisi
+  // ============================
   const reportRef = useRef();
   const location = useLocation();
   const [reportSent, setReportSent] = useState(false);
-  const [retryCount, setRetryCount] = useState(0); // yeniden deneme sayacı
+  const [retryCount, setRetryCount] = useState(0);
   const hastaVerisi = location.state || {};
 
   const {
@@ -33,32 +44,44 @@ const ResultAndReportPage = () => {
     year: "numeric",
   });
 
+  // ============================
+  // Model Tahmini Etiket Fonksiyonu
+  // 0 -> Sağlıklı, 1 -> Hasta
+  // ============================
   const labelFromPrediction = (value) => {
     if (value === 0 || value === "0") return "Sağlıklı";
     if (value === 1 || value === "1") return "Hasta";
     return value;
   };
 
+  // ============================
+  // PDF İndirme Fonksiyonu
+  // HTML içeriğini PDF olarak kaydeder
+  // ============================
   const downloadPDF = () => {
     const element = reportRef.current;
   
     const opt = {
-      margin: [10, 10, 10, 10], // üst, sağ, alt, sol
+      margin: [10, 10, 10, 10],
       filename: "saglik-raporu.pdf",
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: {
         scale: 2,
         scrollX: 0,
         scrollY: 0,
-        windowWidth: element.scrollWidth, // 🎯 Genişliği tam al
+        windowWidth: element.scrollWidth,
       },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
   
     html2pdf().set(opt).from(element).save();
-  };
+  };
 
+  // ============================
+  // Rapor Gönderme UseEffect
+  // Servera raporu gönderir, hatada retry mekanizması içerir
+  // ============================
   useEffect(() => {
     const controller = new AbortController();
 
@@ -113,11 +136,14 @@ const ResultAndReportPage = () => {
     retryCount,
   ]);
 
+  // ============================
+  // JSX Yapısı
+  // Chatbot, rapor içeriği, model tahminleri, kan değerleri, ultrason görüntüsü ve PDF butonu
+  // ============================
   return (
     <div className="report-page">
       <Chatbot />
       <div className="report-container" ref={reportRef}>
-        {/* ... (rapor içeriği aynı kalacak) */}
         <div className="header">
           <img src="/images/istun_logo.png" alt="Logo" className="logo" />
           <div className="title">
@@ -134,9 +160,7 @@ const ResultAndReportPage = () => {
             <tbody>
               <tr>
                 <td>Adı ve Soyadı:</td>
-                <td>
-                  {name} {surname}
-                </td>
+                <td>{name} {surname}</td>
               </tr>
               <tr>
                 <td>T.C. Kimlik No:</td>
@@ -168,11 +192,11 @@ const ResultAndReportPage = () => {
           </div>
         </div>
 
-          <div className="markdown-box">
-    <Markdown options={{ forceBlock: true }}>
-      {llmExplanation || "Yorum yok."}
-    </Markdown>
-  </div>
+        <div className="markdown-box">
+          <Markdown options={{ forceBlock: true }}>
+            {llmExplanation || "Yorum yok."}
+          </Markdown>
+        </div>
 
         <div className="section">
           <h4>KAN DEĞERLERİ:</h4>
