@@ -31,7 +31,7 @@ English version: [README_en.md](README_en.md)
 
 ## Proje Hakkında
 
-![Screen Shot](readme_assets/ekran1.png)
+![Screen Shot](readme_assets/ekran1.PNG)
 
 Yapay zeka modeli ile geliştirilen bu uygulamamız react ve model destekli geliştirilen ve son teknolojileri kullanan bir uygulamadır. Bu uygulama İSTÜN Yazılım Mühendisliği Bölüm Başkanı Halis Altun ve Bilgisayar Mühendisliği Bölüm Başkanı Nazlı Tokatlı rehberliğinde bilgisayar ve yazılım mühendislerinden oluşan staj ekibi tarafından geliştirilmiştir.
 
