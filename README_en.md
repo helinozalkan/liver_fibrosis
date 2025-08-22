@@ -105,9 +105,9 @@ You need to have the following installed:
 
 ## ScreenShots
 ![Screen Shot](readme_assets/ekran2.PNG)
-![Screen Shot](readme_assets/ekran3.png)
-![Screen Shot](readme_assets/ekran4.png)
-![Screen Shot](readme_assets/ekran5.png)
+![Screen Shot](readme_assets/ekran3.PNG)
+![Screen Shot](readme_assets/ekran4.PNG)
+![Screen Shot](readme_assets/ekran5.PNG)
 
 ## Roadmap
 Check open issues for a list of proposed features and known issues.
