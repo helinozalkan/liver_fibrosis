@@ -1,7 +1,11 @@
+// ============================
+// Hasta Geçmiş Sayfası
+// Bir hastanın geçmiş raporlarını, kan değerlerini ve evre değişim grafiğini gösterir
+// ============================
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Markdown from "markdown-to-jsx";
-import PersonalInfoBar2 from "../components/PersonalInfoBar2";
+
 import {
   LineChart,
   Line,
@@ -14,104 +18,109 @@ import {
 } from "recharts";
 
 const HastaGecmisPage = () => {
+  // ============================
+  // State Tanımlamaları
+  // tc: hasta TC numarası
+  // raporlar: hastanın geçmiş raporları
+  // evreData: raporlardan çıkarılan evre değişim verisi
+  // kanData: laboratuvar değerleri grafiği için veri
+  // expandedIndex: hangi rapor detayının açık olduğunu tutar
+  // hasta: hasta bilgisi
+  // ============================
   const location = useLocation();
   const { tc } = location.state || { tc: null };
   const [raporlar, setRaporlar] = useState([]);
   const [evreData, setEvreData] = useState([]);
   const [kanData, setKanData] = useState([]);
-  const [expandedIndex, setExpandedIndex] = useState(null); // 👈 hangi rapor açık?
+  const [expandedIndex, setExpandedIndex] = useState(null);
   const [hasta, setHasta] = useState(null); 
-
   const navigate = useNavigate();
 
+  // ============================
+  // useEffect ile hasta ve rapor verilerini fetch etme
+  // Kan değerlerini ve evre değişimlerini formatlayıp state'e kaydetme
+  // ============================
   useEffect(() => {
-  if (tc) {
-    fetch(`http://localhost:5001/patients/${tc}`)
-      .then((res) => res.json())
-      .then((data) => setHasta(data))
-      .catch((err) => console.error("Hasta bilgisi çekme hatası:", err));
+    if (tc) {
+      // Hasta bilgisi çekme
+      fetch(`http://localhost:5001/patients/${tc}`)
+        .then((res) => res.json())
+        .then((data) => setHasta(data))
+        .catch((err) => console.error("Hasta bilgisi çekme hatası:", err));
 
-    fetch(`http://localhost:5001/get_reports/${tc}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const reports = data.reports || [];
-        setRaporlar(reports);
-  fetch(`http://localhost:5001/lab_values/${tc}`)
-    .then((res) => res.json())
-    .then((data) => {
-      const labValues = data.lab_values || [];
-      // Tarihe göre sıralama (eski → yeni)
-      labValues.sort((a, b) => new Date(a.tarih) - new Date(b.tarih));
+      // Hasta raporlarını çekme
+      fetch(`http://localhost:5001/get_reports/${tc}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const reports = data.reports || [];
+          setRaporlar(reports);
 
-      // Backend verisini grafik formatına uygun hale getir
-      const formattedLabValues = labValues.map(item => ({
-        tarih: new Date(item.tarih).toLocaleString("tr-TR", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        AST: item.AST,
-        ALT: item.ALT,
-        ALP: item.ALP,
-        Protein: item.Protein,
-        "AG Oranı": item.AG_Ratio,
-        "Total Bilirubin": item.Total_Bilirubin,
-        "Direkt Bilirubin": item.Direkt_Bilirubin,
-        Albumin: item.Albumin,
-      }));
+          // Laboratuvar değerlerini çekme ve grafiğe uygun hale getirme
+          fetch(`http://localhost:5001/lab_values/${tc}`)
+            .then((res) => res.json())
+            .then((data) => {
+              const labValues = data.lab_values || [];
+              labValues.sort((a, b) => new Date(a.tarih) - new Date(b.tarih));
 
-      setKanData(formattedLabValues);
-    })
-    .catch((err) => console.error("Kan değerleri çekilemedi:", err));
+              const formattedLabValues = labValues.map(item => ({
+                tarih: new Date(item.tarih).toLocaleString("tr-TR", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+                AST: item.AST,
+                ALT: item.ALT,
+                ALP: item.ALP,
+                Protein: item.Protein,
+                "AG Oranı": item.AG_Ratio,
+                "Total Bilirubin": item.Total_Bilirubin,
+                "Direkt Bilirubin": item.Direkt_Bilirubin,
+                Albumin: item.Albumin,
+              }));
 
-        // Evre verisini raporlardan çıkar ve sırala
-        const evreNumeric = {
-          F0: 0,
-          F1: 1,
-          F2: 2,
-          F3: 3,
-          F4: 4,
-        };
+              setKanData(formattedLabValues);
+            })
+            .catch((err) => console.error("Kan değerleri çekilemedi:", err));
 
-        const evreItems = reports
-          .filter((r) => r.evre && evreNumeric.hasOwnProperty(r.evre))
-          .map((r) => ({
-            tarih: new Date(r.created_at).toLocaleString("tr-TR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-          }),
-            evre: evreNumeric[r.evre],
-          }))
-          .sort((a, b) => new Date(a.tarih) - new Date(b.tarih));
+          // Evre verilerini raporlardan çıkarma ve sıralama
+          const evreNumeric = { F0: 0, F1: 1, F2: 2, F3: 3, F4: 4 };
+          const evreItems = reports
+            .filter((r) => r.evre && evreNumeric.hasOwnProperty(r.evre))
+            .map((r) => ({
+              tarih: new Date(r.created_at).toLocaleString("tr-TR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              }),
+              evre: evreNumeric[r.evre],
+            }))
+            .sort((a, b) => new Date(a.tarih) - new Date(b.tarih));
 
+          setEvreData(evreItems);
+        })
+        .catch((err) => console.error("Rapor getirme hatası:", err));
+    }
+  }, [tc]);
 
-        setEvreData(evreItems);
-      })
-      .catch((err) => console.error("Rapor getirme hatası:", err));
-  }
-}, [tc]);
-
-
+  // ============================
+  // Rapor detayını aç/kapat fonksiyonu
+  // ============================
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
+  // ============================
+  // Evre label sözlüğü
+  // ============================
+  const evreLabels = { 0: "F0", 1: "F1", 2: "F2", 3: "F3", 4: "F4" };
 
-  const evreLabels = {
-    0: "F0",
-    1: "F1",
-    2: "F2",
-    3: "F3",
-    4: "F4",
-  };
-
- 
-
+  // ============================
+  // Kan değerleri için renkler
+  // ============================
   const renkler = {
     AST: "#1f77b4",
     ALT: "#ff7f0e",
@@ -123,6 +132,10 @@ const HastaGecmisPage = () => {
     Albumin: "#7f7f7f",
   };
 
+  // ============================
+  // JSX Yapısı
+  // Navbar, hasta bilgileri, grafikler ve rapor kartları
+  // ============================
   return (
     <div style={styles.page}>
       <div style={styles.navbar}>
@@ -136,8 +149,7 @@ const HastaGecmisPage = () => {
           Ad Soyad: <span className="notranslate">{hasta ? `${hasta.name} ${hasta.surname}` : "Bilinmiyor"}</span>
         </h4>
 
-
-
+        {/* Evre değişim ve Kan değerleri grafikleri */}
         <div style={styles.chartsRow}>
           <div style={styles.chartBoxSmall}>
             <h3 style={styles.chartTitle}>Evre Değişimi</h3>
@@ -194,6 +206,7 @@ const HastaGecmisPage = () => {
           </div>
         </div>
 
+        {/* Rapor listesi */}
         <div style={styles.reportContainer}>
           {raporlar.length === 0 ? (
             <p>Bu hastaya ait geçmiş rapor bulunamadı.</p>
@@ -237,6 +250,10 @@ const HastaGecmisPage = () => {
   );
 };
 
+// ============================
+// Sayfa Stilleri
+// Responsive ve okunabilir tablo ve grafik tasarımı
+// ============================
 const styles = {
   page: {
     fontFamily: "sans-serif",
