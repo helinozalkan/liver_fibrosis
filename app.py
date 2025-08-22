@@ -11,9 +11,9 @@ import os
 import pdfplumber
 import sqlite3
 # Model dosya yolları
-RF_MODEL_PATH = r"C:\Users\ornek\Desktop\Main2\rf_model.pkl"
-SCALER_PATH = r"C:\Users\ornek\Desktop\Main2\scaler.pkl"
-CNN_MODEL_PATH = r"C:\Users\ornek\Desktop\Main2\cnn_model.h5"
+RF_MODEL_PATH = r"C:\Users\sumey\Desktop\Main\rf_model.pkl"
+SCALER_PATH = r"C:\Users\sumey\Desktop\Main\scaler.pkl"
+CNN_MODEL_PATH = r"C:\Users\sumey\Desktop\Main\cnn_model.h5"
 # API Keyler
 API_KEY = "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"
 API_KEY2 = "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"
