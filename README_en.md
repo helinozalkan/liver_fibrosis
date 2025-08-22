@@ -29,7 +29,7 @@ Türkçe için: [README_tr.md](README_tr.md)
 
 ## About the Project
 
-![Screen Shot](readme_assets/ekran1.png)
+![Screen Shot](readme_assets/ekran1.PNG)
 
 This application, developed with an AI model, is built with React and supported by state-of-the-art technologies. It was created by an internship team consisting of computer and software engineers under the guidance of Halis Altun (Head of Software Engineering Department at İSTÜN) and Nazlı Tokatlı (Head of Computer Engineering Department at İSTÜN).
 
