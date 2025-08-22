@@ -96,10 +96,10 @@ Bu projeyi çalıştırabilmek için aşağıdaki araçların kurulu olması ger
 
 
 ## Ekran Görüntüleri
-![Screen Shot](readme_assets/ekran2.png)
-![Screen Shot](readme_assets/ekran3.png)
-![Screen Shot](readme_assets/ekran4.png)
-![Screen Shot](readme_assets/ekran5.png)
+![Screen Shot](readme_assets/ekran2.PNG)
+![Screen Shot](readme_assets/ekran3.PNG)
+![Screen Shot](readme_assets/ekran4.PNG)
+![Screen Shot](readme_assets/ekran5.PNG)
 
 ## Yol Haritası
 Önerilen özelliklerin ve bilinen sorunların listesi için açık konulara bakın.
