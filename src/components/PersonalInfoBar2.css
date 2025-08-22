@@ -1,15 +1,17 @@
+/* Üst bilgi çubuğu: kullanıcı giriş/çıkış alanı */
 .personal-info-bar2 {
-  background-color: #2E7D32;
+  background-color: #2E7D32; 
   padding: 20px;
   color: white;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; 
   align-items: center;
   width: 100vw;
   margin: 0;
   box-sizing: border-box;
 }
 
+/* Giriş/çıkış butonu stili */
 .personal-info-login {
   background-color: #fff;
   color: black;
@@ -21,7 +23,7 @@
   margin-right: 70px;
   cursor: pointer;
 }
-
+/* Mobil uyumlu düzenlemeler */
 @media (max-width: 600px) {
   .personal-info-bar2 {
     padding: 10px;
