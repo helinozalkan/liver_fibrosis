@@ -1,4 +1,4 @@
-
+/* Sayfa ve body için temel stil ayarları */
 body, html {
   margin: 0;
   padding: 0;
@@ -9,11 +9,10 @@ body, html {
   background-size: cover;
   background-attachment: fixed;
 }
-
+/* Mobil uyumluluk için font ve padding ayarları */
 @media (max-width: 600px) {
   body, html {
     font-size: 15px;
     padding: 0 2vw;
   }
 }
-
