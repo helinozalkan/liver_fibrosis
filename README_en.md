@@ -104,7 +104,7 @@ You need to have the following installed:
 
 
 ## ScreenShots
-![Screen Shot](readme_assets/ekran2.png)
+![Screen Shot](readme_assets/ekran2.PNG)
 ![Screen Shot](readme_assets/ekran3.png)
 ![Screen Shot](readme_assets/ekran4.png)
 ![Screen Shot](readme_assets/ekran5.png)
