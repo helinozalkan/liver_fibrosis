@@ -4,144 +4,122 @@ import { FiLogOut } from "react-icons/fi";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import SystemInfoModal from "./SystemInfoModal";
 
+// Kullanıcı Bilgi ve Menü Çubuğu Bileşeni (Responsive ve Şifre Popup Destekli)
 const PersonalInfoBar2 = ({ onLogout }) => {
-  const [userName, setUserName] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [passwordPopup, setPasswordPopup] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  // State tanımlamaları
+  const [userName, setUserName] = useState(""); // Kullanıcı adı
+  const [menuOpen, setMenuOpen] = useState(false); // Menü açık/kapalı durumu
+  const [passwordPopup, setPasswordPopup] = useState(false); // Şifre popup durumu
+  const [password, setPassword] = useState(""); // Şifre input değeri
+  const [error, setError] = useState(""); // Hata mesajı
+  const [showModal, setShowModal] = useState(false); // Yardım modal durumu
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Pencere genişliği (responsive için)
   const navigate = useNavigate();
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
+  // Component mount edildiğinde kullanıcı adı al, modal kontrolü yap ve pencere resize listener ekle
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
-    if (storedName) {
-      setUserName(storedName);
-    }
+    if (storedName) setUserName(storedName);
+
     const modalKey = `hasSeenSystemInfoModal_${storedName || "guest"}`;
     const hasSeenModal = localStorage.getItem(modalKey);
     if (!hasSeenModal) {
       setShowModal(true);
-      localStorage.setItem(modalKey, "true");
-    }
+      localStorage.setItem(modalKey, "true");
+    }
 
-    // Add event listener for window resize
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    // Pencere boyutu değişikliklerini takip et
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
 
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    // Component unmount olduğunda event listener temizle
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Kullanıcının adının ilk harfi (profil simgesi için)
   const firstLetter = userName?.charAt(0).toUpperCase();
 
+  // Şifre kontrol fonksiyonu
   const handleCheckPassword = () => {
     if (password === "1234") {
       setPasswordPopup(false);
       setPassword("");
       setError("");
-      // Corrected logic: user needs to be redirected to /doktor-giris after successful password check
-      // However, it seems the current context is already DoktorGirisPage.
-      // If this popup is for an *action* within DoktorGirisPage, you might not navigate away.
-      // If it's for *entering* DoktorGirisPage from a different page, then this navigation is correct.
-      // Assuming it's for an internal action, removing navigate for now.
-      // If it's intended to navigate *back* to DoktorGirisPage after a password check from somewhere else, keep it.
-      // For this component, it's likely part of the main app flow, so we'll keep it as a placeholder.
-      navigate("/doktor-giris"); // Keeping original navigation for consistency with the provided code
+      navigate("/doktor-giris"); // Başarılı şifre sonrası yönlendirme
     } else {
       setError("Şifre hatalı. Lütfen tekrar deneyin.");
     }
   };
 
-  // Determine if it's a small screen
-  const isSmallScreen = windowWidth <= 768; // You can adjust this breakpoint
-
-  const handleLogout = () => {
-    fetch("http://localhost:5001/logout", {
-      method: "POST",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("userName");
-          setMenuOpen(false);
-          onLogout();  // App.js'deki state'i güncelle
-          navigate("/login");
-        } else {
-          alert("Çıkış yapılamadı, tekrar deneyin.");
-        }
-      })
-      .catch(() => alert("Sunucu hatası, çıkış yapılamadı."));
-  };
+  // Küçük ekran kontrolü (responsive)
+  const isSmallScreen = windowWidth <= 768; // Breakpoint isteğe göre değiştirilebilir
 
   return (
     <div
       style={{
         backgroundColor: "#213448",
-        padding: isSmallScreen ? "10px 15px" : "10px 30px", // Less padding on small screens
+        padding: isSmallScreen ? "10px 15px" : "10px 30px",
         color: "white",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        width: "100%", // Use 100% instead of 100vw for better responsiveness
-        minHeight: "60px", // Use min-height, let it grow if content wraps
+        width: "100%",
+        minHeight: "60px",
         boxSizing: "border-box",
         position: "relative",
-        flexWrap: isSmallScreen ? "wrap" : "nowrap", // Allow items to wrap on small screens
-        gap: isSmallScreen ? "10px" : "0", // Add gap between wrapped items
+        flexWrap: isSmallScreen ? "wrap" : "nowrap",
+        gap: isSmallScreen ? "10px" : "0",
       }}
     >
+      {/* Logo */}
       <img
         src="/images/istun.logo.white.png"
         alt="İstun Logo"
         style={{
-          height: isSmallScreen ? "25px" : "35px", // Smaller logo on small screens
+          height: isSmallScreen ? "25px" : "35px",
           transform: isSmallScreen ? "scale(1.5)" : "scale(1.8)",
           transformOrigin: "left center",
         }}
       />
+
+      {/* Uygulama İsmi */}
       <div
         style={{
-          flex: isSmallScreen ? "1 1 100%" : "0.35", // Takes full width on small screens
+          flex: isSmallScreen ? "1 1 100%" : "0.35",
           textAlign: "center",
           fontStyle: "italic",
-          fontSize: isSmallScreen ? "20px" : "35px", // Smaller font on small screens
+          fontSize: isSmallScreen ? "20px" : "35px",
           color: "#ffffffff",
-          order: isSmallScreen ? 3 : "unset", // Move to bottom on small screens if wrapped
-          marginTop: isSmallScreen ? "10px" : "0", // Add margin if wrapped
+          order: isSmallScreen ? 3 : "unset",
+          marginTop: isSmallScreen ? "10px" : "0",
         }}
       >
         FibroCheck
       </div>
+
+      {/* Panel başlığı */}
       <div
         style={{
-          flex: isSmallScreen ? "1 1 100%" : "1", // Takes full width on small screens
+          flex: isSmallScreen ? "1 1 100%" : "1",
           textAlign: "center",
-          fontSize: isSmallScreen ? "16px" : "30px", // Smaller font on small screens
+          fontSize: isSmallScreen ? "16px" : "30px",
           color: "#ffffffff",
-          order: isSmallScreen ? 4 : "unset", // Move to bottom on small screens if wrapped
-          marginTop: isSmallScreen ? "5px" : "0", // Add margin if wrapped
+          order: isSmallScreen ? 4 : "unset",
+          marginTop: isSmallScreen ? "5px" : "0",
         }}
       >
         Doktor Paneli
       </div>
 
-      {/* Sağ: Kullanıcı menüsü */}
+      {/* Sağ Panel: Kullanıcı Menüsü */}
       <div
         style={{
           position: "relative",
-          marginLeft: isSmallScreen ? "auto" : "0", // Push to right on small screens
-          order: isSmallScreen ? 2 : "unset", // Order second on small screens (after logo)
+          marginLeft: isSmallScreen ? "auto" : "0",
+          order: isSmallScreen ? 2 : "unset",
         }}
       >
+        {/* Menü başlığı ve açma/kapama */}
         <div
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
@@ -153,6 +131,7 @@ const PersonalInfoBar2 = ({ onLogout }) => {
             padding: "5px 10px",
           }}
         >
+          {/* Profil simgesi */}
           <div
             style={{
               width: "30px",
@@ -170,12 +149,17 @@ const PersonalInfoBar2 = ({ onLogout }) => {
           >
             {firstLetter}
           </div>
+
+          {/* Kullanıcı adı */}
           <div style={{ fontWeight: "bold", color: "white", marginRight: "5px" }}>
             {userName}
           </div>
+
+          {/* Menü ikonu */}
           {menuOpen ? <FaChevronUp color="white" /> : <FaChevronDown color="white" />}
         </div>
 
+        {/* Menü içerikleri */}
         {menuOpen && (
           <div
             style={{
@@ -192,25 +176,27 @@ const PersonalInfoBar2 = ({ onLogout }) => {
               minWidth: "170px",
             }}
           >
+            {/* Ana Sayfa */}
             <div
               style={menuItemStyle}
               onClick={() => {
-                setMenuOpen(false); // Close menu after click
+                setMenuOpen(false);
                 navigate("/form");
               }}
             >
               👨‍⚕️ Ana Sayfa
             </div>
-            <div
-              style={menuItemStyle}
-              onClick={() =>setShowModal(true)}
-            >
-           ❓ Yardım
+
+            {/* Yardım */}
+            <div style={menuItemStyle} onClick={() => setShowModal(true)}>
+              ❓ Yardım
             </div>
+
+            {/* Çıkış */}
             <div
               style={{ ...menuItemStyle, color: "#c0392b", fontWeight: "bold" }}
               onClick={() => {
-                setMenuOpen(false); 
+                setMenuOpen(false);
                 localStorage.removeItem("userName");
                 onLogout();
                 navigate("/login");
@@ -223,7 +209,7 @@ const PersonalInfoBar2 = ({ onLogout }) => {
         )}
       </div>
 
-      {/* Şifre Giriş Kutusu */}
+      {/* Şifre Giriş Popup */}
       {passwordPopup && (
         <div
           style={{
@@ -237,7 +223,7 @@ const PersonalInfoBar2 = ({ onLogout }) => {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
-            padding: "20px", // Add padding for small screens
+            padding: "20px",
             boxSizing: "border-box",
           }}
         >
@@ -247,8 +233,8 @@ const PersonalInfoBar2 = ({ onLogout }) => {
               padding: "30px",
               borderRadius: "10px",
               boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
-              width: isSmallScreen ? "90%" : "300px", // Adjust width for small screens
-              maxWidth: "300px", // Ensure it doesn't get too wide
+              width: isSmallScreen ? "90%" : "300px",
+              maxWidth: "300px",
               textAlign: "center",
               position: "relative",
             }}
@@ -282,13 +268,14 @@ const PersonalInfoBar2 = ({ onLogout }) => {
               style={{
                 marginBottom: "25px",
                 fontWeight: "bold",
-                fontSize: isSmallScreen ? "18px" : "20px", // Smaller font
+                fontSize: isSmallScreen ? "18px" : "20px",
                 color: "#213448",
               }}
             >
               Lütfen şifrenizi giriniz
             </h3>
 
+            {/* Şifre input */}
             <input
               type="password"
               value={password}
@@ -315,10 +302,10 @@ const PersonalInfoBar2 = ({ onLogout }) => {
             />
 
             {error && (
-              <div style={{ color: "red", marginTop: "8px", fontSize: "14px" }}>
-                {error}
-              </div>
+              <div style={{ color: "red", marginTop: "8px", fontSize: "14px" }}>{error}</div>
             )}
+
+            {/* Devam butonu */}
             <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
               <button
                 onClick={handleCheckPassword}
@@ -338,22 +325,20 @@ const PersonalInfoBar2 = ({ onLogout }) => {
           </div>
         </div>
       )}
-      {showModal && <SystemInfoModal onClose={() => setShowModal(false)} />}
+
+      {/* Yardım Modal */}
+      {showModal && <SystemInfoModal onClose={() => setShowModal(false)} />}
     </div>
   );
 };
 
+// Menü öğeleri stili
 const menuItemStyle = {
   padding: "10px 16px",
   cursor: "pointer",
   borderBottom: "1px solid #eee",
   display: "flex",
   alignItems: "center",
-  // Hover effect for menu items
-  transition: "background-color 0.2s ease",
-  "&:hover": {
-    backgroundColor: "#f0f0f0", // Light grey on hover
-  },
 };
 
 export default PersonalInfoBar2;
