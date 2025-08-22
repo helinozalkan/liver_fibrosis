@@ -1,29 +1,45 @@
+// ============================
+// Not Ekleme Sayfası Bileşeni
+// Kullanıcının yeni not eklemesini sağlar
+// LocalStorage'a kaydeder ve önceki sayfaya döner
+// ============================
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const NotEklePage = () => {
+  // ============================
+  // State Tanımlamaları
+  // Başlık ve içerik alanlarını yönetir
+  // ============================
   const [baslik, setBaslik] = useState("");
   const [icerik, setIcerik] = useState("");
   const navigate = useNavigate();
 
+  // ============================
+  // Not Kaydetme Fonksiyonu
+  // LocalStorage'da notları saklar ve kullanıcıyı geri yönlendirir
+  // ============================
   const handleSubmit = () => {
-  if (baslik.trim() && icerik.trim()) {
-    const mevcut = JSON.parse(localStorage.getItem("notlar")) || [];
+    if (baslik.trim() && icerik.trim()) {
+      const mevcut = JSON.parse(localStorage.getItem("notlar")) || [];
 
-    const yeniNot = {
-      baslik,
-      icerik,
-      tarih: new Date().toLocaleString("tr-TR"),
-    };
+      const yeniNot = {
+        baslik,
+        icerik,
+        tarih: new Date().toLocaleString("tr-TR"),
+      };
 
-    localStorage.setItem("notlar", JSON.stringify([yeniNot, ...mevcut]));
-    navigate("/doktor-giris");
-  } else {
-    alert("Lütfen tüm alanları doldurun.");
-  }
-};
+      localStorage.setItem("notlar", JSON.stringify([yeniNot, ...mevcut]));
+      navigate("/doktor-giris");
+    } else {
+      alert("Lütfen tüm alanları doldurun.");
+    }
+  };
 
-
+  // ============================
+  // Not Ekleme Formu JSX
+  // Başlık ve içerik inputları ile gönder butonunu içerir
+  // ============================
   return (
     <div style={styles.overlay}>
       <div style={styles.modal}>
@@ -52,6 +68,10 @@ const NotEklePage = () => {
   );
 };
 
+// ============================
+// Sayfa Stilleri
+// Overlay ve modal tasarımı, input ve buton stilleri
+// ============================
 const styles = {
   overlay: {
     height: "100vh",
@@ -104,4 +124,4 @@ const styles = {
   },
 };
 
-export default NotEklePage;
+export default NotEklePage;
