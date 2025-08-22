@@ -1,15 +1,18 @@
+// Evreye göre hasta detaylarını listeleyen sayfa
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PersonalInfoBar2 from "../components/PersonalInfoBar2";
 
+// Evre detay sayfası bileşeni
 const EvreDetayPage = () => {
   const location = useLocation();
   const { evre } = location.state || { evre: "Bilinmiyor" };
   const [hastalar, setHastalar] = useState([]);
   const navigate = useNavigate();
 
+  // Hasta verilerini backend’den çekme
   useEffect(() => {
-    fetch("http://localhost:5001/patients",{
+    fetch("http://localhost:5001/patients", {
       credentials: "include",  
     })
       .then((res) => res.json())
@@ -17,15 +20,19 @@ const EvreDetayPage = () => {
       .catch((err) => console.error("Veri çekme hatası:", err));
   }, []);
 
+  // Yalnızca seçilen evredeki hastaları filtreleme
   const filtreliListe = hastalar.filter((h) => h.evre === evre);
 
+  // Sayfa arayüzü
   return (
     <div style={styles.page}>
+      {/* Üst bar */}
       <PersonalInfoBar2 onLogout={() => navigate("/")} />
 
       <div style={styles.content}>
         <h2 style={styles.header}>{evre} Evresine Ait Hastalar</h2>
 
+        {/* Eğer evrede hasta yoksa uyarı, varsa tablo */}
         {filtreliListe.length === 0 ? (
           <p>Bu evreye ait hasta bulunamadı.</p>
         ) : (
@@ -35,7 +42,7 @@ const EvreDetayPage = () => {
                 <tr>
                   <th style={styles.th}>Ad Soyad</th>
                   <th style={styles.th}>TC</th>
-                  <th style={styles.th}>Tarih</th> {/* Evre yerine Tarih */}
+                  <th style={styles.th}>Tarih</th> {/* Şimdilik sabit tarih */}
                 </tr>
               </thead>
               <tbody>
@@ -55,6 +62,7 @@ const EvreDetayPage = () => {
   );
 };
 
+// Stil objeleri
 const styles = {
   page: {
     fontFamily: "sans-serif",
