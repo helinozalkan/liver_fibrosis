@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { PieChart, Pie, Cell, Tooltip, LabelList } from "recharts";
+import { PieChart, Pie, Cell, LabelList } from "recharts";
 import { useNavigate, useLocation } from "react-router-dom";
 import PersonalInfoBar2 from "../components/PersonalInfoBar2";
-
+import { FaTrash } from "react-icons/fa";
+// Doktor Giriş Sayfası: Hasta Arama, Evre Dağılımı ve Notlar
 const DoktorGirisPage = () => {
   const [hastalar, setHastalar] = useState([]);
   const [tc, setTc] = useState("");
-  const [notlar, setNotlar] = useState(() => {
-    const local = localStorage.getItem("notlar");
-    return local ? JSON.parse(local) : [];
-  });
+  const [notlar, setNotlar] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Sayfa açılınca localStorage'dan notları yükle
+  useEffect(() => {
+    const kayitliNotlar = localStorage.getItem("notlar");
+    if (kayitliNotlar) {
+      setNotlar(JSON.parse(kayitliNotlar));
+    }
+  }, []);
+
+  // Hastaları backend'den çek
   useEffect(() => {
     fetch("http://localhost:5001/patients", { credentials: "include" })
       .then((res) => res.json())
@@ -28,6 +35,7 @@ const DoktorGirisPage = () => {
       .catch((err) => console.error(err));
   }, []);
 
+ // Eğer location.state ile yeni not geldiyse ekle
   useEffect(() => {
     if (location.state?.yeniNot) {
       const yeni = location.state.yeniNot;
@@ -36,8 +44,8 @@ const DoktorGirisPage = () => {
       localStorage.setItem("notlar", JSON.stringify(guncelNotlar));
       window.history.replaceState({}, document.title);
     }
-  }, [location.state]);
-
+  }, [location.state, notlar]);
+  // Hasta arama fonksiyonu
   const handleSearch = () => {
     const hasta = hastalar.find((h) => h.tc === tc.trim());
     if (hasta) {
@@ -51,7 +59,7 @@ const DoktorGirisPage = () => {
       alert("TC bulunamadı!");
     }
   };
-
+  // Evre verileri (F0-F4)
   const evreler = ["F0", "F1", "F2", "F3", "F4"];
   const rawData = evreler
     .map((evre) => ({
@@ -67,7 +75,7 @@ const DoktorGirisPage = () => {
   }));
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AB47BC"];
-
+  // Pie chart dış label render
   const renderOuterLabel = ({ cx, cy, midAngle, outerRadius, name, value }) => {
     const RADIAN = Math.PI / 180;
     const radius = outerRadius + 20;
@@ -86,8 +94,15 @@ const DoktorGirisPage = () => {
       </text>
     );
   };
-
-  const renderInnerPercentage = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  // Pie chart iç percentage render
+  const renderInnerPercentage = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+  }) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -107,12 +122,22 @@ const DoktorGirisPage = () => {
     );
   };
 
+  // Not silme fonksiyonu
+  const notSil = (index) => {
+    const yeniNotlar = [...notlar];
+    yeniNotlar.splice(index, 1);
+    setNotlar(yeniNotlar);
+    localStorage.setItem("notlar", JSON.stringify(yeniNotlar));
+  };
+
   return (
     <div style={styles.page}>
       <PersonalInfoBar2 onLogout={() => navigate("/")} />
       {/* Hasta Arama: Üstte yatay ince kutu */}
       <div style={styles.hastaAramaBar}>
-       <h2 style={{ color: "#213448",marginLeft:"650px",marginTop:"-30px"}}>🔍 Hasta Arama</h2>
+        <h2 style={{ color: "#213448", marginLeft: "650px", marginTop: "-30px" }}>
+          🔍 Hasta Arama
+        </h2>
         <div style={styles.centeredSearchBox}>
           <input
             type="text"
@@ -130,14 +155,11 @@ const DoktorGirisPage = () => {
 
       {/* 3 Ana Kutu */}
       <div style={styles.gridTop}>
-      
         {/* Kayıtlı Hasta */}
         <div style={styles.squareCard}>
           <div style={styles.centeredContent}>
             <div style={styles.sayac}>{hastalar.length}</div>
-            <h3 style={{ ...styles.centeredTitle, marginTop: "10px" }}>
-              Kayıtlı Hasta
-            </h3>
+            <h3 style={{ ...styles.centeredTitle, marginTop: "10px" }}>Kayıtlı Hasta</h3>
             <button
               style={styles.hastaButton}
               onClick={() => navigate("/hasta-listesi")}
@@ -167,11 +189,13 @@ const DoktorGirisPage = () => {
                   });
                 }}
               >
-              
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
-                
+
                 <LabelList content={renderInnerPercentage} />
               </Pie>
             </PieChart>
@@ -191,7 +215,8 @@ const DoktorGirisPage = () => {
             </div>
           </div>
         </div>
-         {/* Notlar */}
+
+        {/* Notlar */}
         <div style={styles.squareCard}>
           <h3 style={styles.cardTitle}>📝 Notlar</h3>
           <div style={styles.notesContainer}>
@@ -201,20 +226,40 @@ const DoktorGirisPage = () => {
               notlar.map((not, index) => (
                 <div
                   key={index}
-                  style={{ marginBottom: "30px", cursor: "pointer" }}
+                  style={{
+                    position: "relative",
+                    marginBottom: "30px",
+                    cursor: "pointer",
+                    paddingRight: "25px",
+                  }}
                   onClick={() => navigate("/not-detay", { state: { not } })}
                 >
                   <strong>{not.baslik}</strong>
                   <div style={{ fontSize: "12px", color: "#777" }}>{not.tarih}</div>
+                  <FaTrash
+                    onClick={(e) => {
+                      e.stopPropagation(); // tıklamanın not detayına gitmesini engelle
+                      notSil(index);
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                      color: "#213448",
+                      cursor: "pointer",
+                    }}
+                  />
                 </div>
               ))
             )}
           </div>
-          <button style={styles.buttonSmall} onClick={() => navigate("/not-ekle")}>
+          <button
+            style={styles.buttonSmall}
+            onClick={() => navigate("/not-ekle")}
+          >
             + Yeni Not Ekle
           </button>
         </div>
-
       </div>
     </div>
   );
@@ -228,7 +273,7 @@ const styles = {
     width: "100vw",
     overflowX: "hidden",
   },
-  hastaAramaBar: {  
+  hastaAramaBar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -239,16 +284,16 @@ const styles = {
     margin: "30px",
     boxShadow: "0 12px 24px rgba(232, 224, 211, 0.3)",
     flexWrap: "wrap",
-    marginLeft:"41px",
-    marginRight:"41px",
+    marginLeft: "41px",
+    marginRight: "41px",
   },
   centeredSearchBox: {
     display: "flex",
     alignItems: "center",
     gap: "10px",
-    marginRight:"450px",
-    marginLeft:"500px",
-    marginTop:"10px",
+    marginRight: "450px",
+    marginLeft: "500px",
+    marginTop: "10px",
   },
   tcInput: {
     padding: "10px",
@@ -256,7 +301,6 @@ const styles = {
     border: "1.5px solid #A08963",
     borderRadius: "8px",
     width: "400px",
-    
   },
   tcButton: {
     padding: "10px 20px",
@@ -282,8 +326,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    marginLeft:"20px",
-    marginRight:"20px",
+    marginLeft: "20px",
+    marginRight: "20px",
   },
   cardTitle: {
     color: "#213448",
