@@ -1,14 +1,25 @@
+// ============================
+// Giriş Sayfası Bileşeni
+// Kullanıcı adı ve şifre ile giriş yapılmasını sağlar
+// ============================
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ onLogin }) => {
+  // ============================
+  // State Tanımlamaları
+  // Kullanıcı adı, şifre, hata mesajı ve hover durumunu yönetir
+  // ============================
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
-
+  // ============================
+  // Giriş İşlemi Fonksiyonu
+  // API'ye istek gönderir ve giriş doğrulaması yapar
+  // ============================
   const handleLogin = async () => {
     if (!username || !password) {
       setError("Lütfen kullanıcı adı ve şifreyi giriniz.");
@@ -19,7 +30,7 @@ const LoginPage = ({ onLogin }) => {
       const response = await fetch("http://localhost:5001/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",   // << bu satır eksik senin kodunda
+        credentials: "include",   // Çerezlerin gönderilmesini sağlar
         body: JSON.stringify({ username, password }),
       });
 
@@ -28,8 +39,8 @@ const LoginPage = ({ onLogin }) => {
       if (result.success) {
         setError("");
         localStorage.setItem("userName", username);
-        onLogin(); // Üst component'e haber ver
-        navigate("/");
+        onLogin(); // Üst component'e giriş yapıldığını bildirir
+        navigate("/"); // Ana sayfaya yönlendirir
       } else {
         setError(result.message || "Giriş başarısız.");
       }
@@ -37,8 +48,11 @@ const LoginPage = ({ onLogin }) => {
       setError("Sunucuya bağlanılamadı.");
     }
   };
-  
 
+  // ============================
+  // Giriş Sayfası JSX Yapısı
+  // Logo, başlık, inputlar, hata mesajı ve giriş butonu içerir
+  // ============================
   return (
     <div style={styles.container}>
       <div
@@ -53,21 +67,21 @@ const LoginPage = ({ onLogin }) => {
         <h3 style={styles.logoyazi}>FibroCheck</h3>
         <h2 style={styles.title}>"Bilim, Erken Teşhis ile Başlar!"</h2>
         <input
-  type="text"
-  placeholder="Kullanıcı Adı"
-  value={username}
-  onChange={(e) => setUsername(e.target.value)}
-  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-  style={styles.input}
-/>
-<input
-  type="password"
-  placeholder="Şifre"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-  style={styles.input}
-/>
+          type="text"
+          placeholder="Kullanıcı Adı"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Şifre"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+          style={styles.input}
+        />
 
         {error && <div style={styles.errorText}>{error}</div>}
 
@@ -81,6 +95,10 @@ const LoginPage = ({ onLogin }) => {
   );
 };
 
+// ============================
+// Sayfa Stilleri
+// Container, kart, input, buton, logo gibi elementlerin stil ayarları
+// ============================
 const styles = {
   container: {
     minHeight: "100vh",
@@ -175,4 +193,4 @@ const styles = {
   },
 };
 
-export default LoginPage; 
+export default LoginPage;
