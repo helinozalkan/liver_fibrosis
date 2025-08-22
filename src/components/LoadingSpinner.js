@@ -1,4 +1,5 @@
-// components/LoadingSpinner.js
+// LoadingSpinner.js
+// Bu bileşen sayfa veya veri yüklenirken kullanıcıya gösterilen spinner (yükleniyor) ekranıdır.
 import React from "react";
 import "./LoadingSpinner.css";
 
