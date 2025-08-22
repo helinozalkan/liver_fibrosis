@@ -1,43 +1,50 @@
 import React, { useState, useRef, useEffect } from "react";
 
+// Chatbot Ana Bileşeni
 const Chatbot = () => {
+  // Kullanıcı adını localStorage'dan al, yoksa "guest" olarak ayarla
   const userName = localStorage.getItem("userName") || "guest";
 
+  // Yeni sohbet anahtarı oluşturmak için zaman damgası ile bir key üretir
   const generateNewChatKey = () => {
     const now = new Date();
     const dateStr = now.toLocaleString("tr-TR", {
       day: "2-digit",
       month: "2-digit",
-      year: "numeric",
+      year: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
     }).replace(/[.: ]/g, "-");
     return `chatbotMessages_${userName}_${dateStr}`;
   };
 
-  const [currentKey, setCurrentKey] = useState(generateNewChatKey());
-  const [chatMessages, setChatMessages] = useState(() => {
+  // State tanımlamaları
+  const [currentKey, setCurrentKey] = useState(generateNewChatKey()); // Şu anki sohbet key'i
+  const [chatMessages, setChatMessages] = useState(() => { // Mesajlar state'i, localStorage'dan başlatılır
     const existing = localStorage.getItem(currentKey);
     if (existing) return JSON.parse(existing);
     return [{ sender: "bot", text: "Merhaba! Size nasıl yardımcı olabilirim?", time: Date.now() }];
   });
 
-  const [chatInput, setChatInput] = useState("");
-  const [theme, setTheme] = useState("light");
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef(null);
+  const [chatInput, setChatInput] = useState(""); // Kullanıcı input'u
+  const [theme, setTheme] = useState("light"); // Tema durumu (light/dark)
+  const [isChatOpen, setIsChatOpen] = useState(false); // Chat pencere açık mı
+  const [isTyping, setIsTyping] = useState(false); // Bot yazıyor göstergesi
+  const messagesEndRef = useRef(null); // Scroll kontrolü için ref
 
+  // Mesajları localStorage'da sakla
   useEffect(() => {
     localStorage.setItem(currentKey, JSON.stringify(chatMessages));
   }, [chatMessages, currentKey]);
 
+  // Scroll otomatik olarak en sona kaydır
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
   }, [chatMessages, isTyping]);
 
+  // Kullanıcının tüm sohbet keylerini getir
   const getAllUserChatKeys = () => {
     return Object.keys(localStorage)
       .filter(key => key.startsWith(`chatbotMessages_${userName}_`))
@@ -45,19 +52,22 @@ const Chatbot = () => {
       .reverse();
   };
 
-  const [chatHistoryKeys, setChatHistoryKeys] = useState(getAllUserChatKeys());
+  const [chatHistoryKeys, setChatHistoryKeys] = useState(getAllUserChatKeys()); // Tüm geçmiş sohbet keyleri
 
+  // Belirli bir sohbeti yükle
   const loadChat = (key) => {
     const messages = JSON.parse(localStorage.getItem(key)) || [];
     setChatMessages(messages);
     setCurrentKey(key);
   };
 
+  // Zamanı saat:dakika formatına çevir
   const formatTime = (time) => {
     const d = new Date(time);
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
+  // Mesaj gönderme işlemi
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
 
@@ -67,6 +77,7 @@ const Chatbot = () => {
     setIsTyping(true);
 
     try {
+      // Backend'e mesaj gönderme
       const response = await fetch("http://localhost:5001/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,6 +105,7 @@ const Chatbot = () => {
     }
   };
 
+  // Yeni sohbet başlat
   const startNewChat = () => {
     const newKey = generateNewChatKey();
     setCurrentKey(newKey);
@@ -105,6 +117,7 @@ const Chatbot = () => {
 
   return (
     <>
+      {/* Chatbot Açma Butonu */}
       <button onClick={() => setIsChatOpen(true)} title="Chatbot"
         style={{
           position: "fixed", bottom: "32px", right: "32px", zIndex: 100,
@@ -116,6 +129,7 @@ const Chatbot = () => {
           style={{ width: "40px", height: "40px", marginTop: "7px", marginLeft: "6px" }} />
       </button>
 
+      {/* Chat Penceresi */}
       {isChatOpen && (
         <div style={{
           position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)",
@@ -130,7 +144,7 @@ const Chatbot = () => {
             boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
             border: theme === "dark" ? "1px solid #948979" : "none"
           }}>
-            {/* Sol Panel */}
+            {/* Sol Panel - Sohbet Geçmişi */}
             <div style={{
               width: "200px",
               background: theme === "light" ? "#94B4C1" : "#948979",
@@ -160,6 +174,7 @@ const Chatbot = () => {
                   + Yeni Sohbet
                 </button>
 
+                {/* Geçmiş sohbetlerin listesi */}
                 {chatHistoryKeys.map((key, idx) => (
                   <div key={idx} style={{
                     background: key === currentKey ? "#cbd5e1" : "#213448",
@@ -172,6 +187,7 @@ const Chatbot = () => {
                     <span onClick={() => loadChat(key)} style={{ flex: 1 }}>
                       {key.replace(`chatbotMessages_${userName}_`, "").replace(/-/g, ":")}
                     </span>
+                    {/* Sohbet silme butonu */}
                     <button onClick={(e) => {
                       e.stopPropagation();
                       localStorage.removeItem(key);
@@ -201,8 +217,9 @@ const Chatbot = () => {
               </div>
             </div>
 
-            {/* Sağ Panel */}
+            {/* Sağ Panel - Chat Penceresi */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+              {/* Üst Bar */}
               <div style={{
                 padding: "14px",
                 background: "#1e293b",
@@ -230,6 +247,7 @@ const Chatbot = () => {
                 </div>
               </div>
 
+              {/* Mesaj Alanı */}
               <div ref={messagesEndRef} style={{
                 flex: 1, overflowY: "auto", padding: "16px",
                 background: theme === "light" ? "#fff" : "#2c3e50"
@@ -270,6 +288,7 @@ const Chatbot = () => {
                 {isTyping && <div style={{ fontStyle: "italic", color: "#aaa", paddingLeft: "16px" }}>Asistan yazıyor...</div>}
               </div>
 
+              {/* Mesaj Gönderim Alanı */}
               <div style={{
                 display: "flex",
                 borderTop: theme === "dark" ? "1px solid #948979" : "1px solid #213448",
