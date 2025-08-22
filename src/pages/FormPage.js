@@ -11,7 +11,7 @@ import { data } from "./data";
 const isValidTC = (tc) => {
   if (!/^\d{11}$/.test(tc)) return false;
   if (tc[0] === "0") return false;
-
+  // Tek ve çift hanelerin toplamına göre 10. hane kontrolü
   const digits = tc.split("").map(Number);
   const sumOdd = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
   const sumEven = digits[1] + digits[3] + digits[5] + digits[7];
@@ -25,7 +25,7 @@ const isValidTC = (tc) => {
   return true;
 };
 
-// Ortak Field bileşeni
+// Ortak Field bileşeni (input alanları için)
 const Field = ({ label, value, onChange, type = "text" }) => (
   <div style={{ display: "flex", flexDirection: "column", minWidth: "150px" }}>
     <label
@@ -60,15 +60,15 @@ const Field = ({ label, value, onChange, type = "text" }) => (
   </div>
 );
 
-const FormPage = ({ onLogout, onFormSubmit }) => {
+const FormPage = ({ onLogout}) => {
   const navigate = useNavigate();
-
+  // Hasta bilgileri state'leri
   const [tc, setTc] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-
+  // Kan değerleri state'leri
   const [ast, setAst] = useState("");
   const [alt, setAlt] = useState("");
   const [alp, setAlp] = useState("");
@@ -77,7 +77,7 @@ const FormPage = ({ onLogout, onFormSubmit }) => {
   const [albumin, setAlbumin] = useState("");
   const [agRatio, setAgRatio] = useState("");
   const [proteins, setProteins] = useState("");
-
+  // Dosya ve görsel state'leri
   const [ultrasoundFile, setUltrasoundFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [kanDegeriDosyasi, setKanDegeriDosyasi] = useState(null);
@@ -85,7 +85,7 @@ const FormPage = ({ onLogout, onFormSubmit }) => {
 
   const [vlmOutput, setVlmOutput] = useState("");
   const [vlmLoading, setVlmLoading] = useState(false);
-
+  // Ultrason görseli yükleme ve VLM analiz
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -123,7 +123,7 @@ const FormPage = ({ onLogout, onFormSubmit }) => {
       }
     }
   };
-
+  // PDF ile kan değerlerini otomatik çekme
   const handleKanDegeriUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -200,6 +200,7 @@ const FormPage = ({ onLogout, onFormSubmit }) => {
       if (!labResponse.ok) throw new Error("Laboratuvar verisi kaydedilemedi.");
 
 
+    // Ultrason ve laboratuvar verilerini göndererek tahmin alma
     const formData = new FormData();
     formData.append("Total_Bilirubin", totalBilirubin || "0");
     formData.append("Direct_Bilirubin", directBilirubin || "0");
@@ -221,6 +222,7 @@ const FormPage = ({ onLogout, onFormSubmit }) => {
 
       setLoading(false);
 
+      // Sonuç sayfasına yönlendirme ve state gönderimi
       navigate("/result", {
         state: {
           tc,
@@ -494,10 +496,6 @@ const FormPage = ({ onLogout, onFormSubmit }) => {
 
           {loading && <LoadingSpinner />}
         </div>
-
-
-
-
 
 
 
