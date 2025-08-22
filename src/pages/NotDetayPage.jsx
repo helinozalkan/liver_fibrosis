@@ -1,11 +1,25 @@
+// ============================
+// Not Detay Sayfası Bileşeni
+// Seçilen notun detaylarını gösterir
+// Eğer not yoksa kullanıcıyı önceki sayfaya yönlendirir
+// ============================
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const NotDetayPage = () => {
+  // ============================
+  // Router Hookları
+  // Seçilen not bilgisini almak için useLocation
+  // Sayfalar arası geçiş için useNavigate
+  // ============================
   const location = useLocation();
   const navigate = useNavigate();
   const { not } = location.state || {};
 
+  // ============================
+  // Not Yoksa Gösterilecek Bölüm
+  // Kullanıcıya bilgi verip geri yönlendirir
+  // ============================
   if (!not) {
     return (
       <div style={styles.container}>
@@ -17,6 +31,10 @@ const NotDetayPage = () => {
     );
   }
 
+  // ============================
+  // Not Detaylarının Gösterildiği Bölüm
+  // Başlık, tarih ve içerik bilgilerini içerir
+  // ============================
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -31,6 +49,10 @@ const NotDetayPage = () => {
   );
 };
 
+// ============================
+// Sayfa Stilleri
+// Container, kart, başlık, tarih, içerik ve buton stilleri
+// ============================
 const styles = {
   container: {
     display: "flex",
@@ -75,4 +97,4 @@ const styles = {
   },
 };
 
-export default NotDetayPage;
+export default NotDetayPage;
