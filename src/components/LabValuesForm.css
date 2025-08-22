@@ -1,3 +1,4 @@
+/* Kan değerleri formu konteyneri */
 .lab-values-form {
   display: flex;
   flex-wrap: wrap;
@@ -8,18 +9,21 @@
   border-radius: 10px;
 }
 
+/* Her bir form alanı (input + label) */
 .form-field {
   flex: 0 0 48%;
   display: flex;
   flex-direction: column;
 }
 
+/* Form alanlarının etiketleri */
 .form-field label {
   font-weight: 600;
   margin-bottom: 5px;
   color: #333;
 }
 
+/* Input alanları */
 .form-field input {
   padding: 10px;
   border: 1px solid #ccc;
@@ -28,12 +32,13 @@
   transition: border-color 0.3s ease;
 }
 
+/* Input odaklanınca kenarlık rengi değişir */
 .form-field input:focus {
   border-color: #007bff;
   outline: none;
 }
 
-/* Responsive görünüm: Ekran küçülünce tüm alanlar %100 genişlikte olsun */
+/* Responsive görünüm: Ekran daralınca alanlar tam genişlikte olsun */
 @media (max-width: 768px) {
   .form-field {
     flex: 0 0 100%;
