@@ -1,11 +1,24 @@
+// ============================
+// Hasta Listesi Sayfası
+// Tüm hastaların listesini gösterir, arama filtreleme sağlar
+// ============================
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import PersonalInfoBar2 from "../components/PersonalInfoBar2";
+
 const HastaListesiPage = () => {
+  // ============================
+  // State Tanımlamaları
+  // arama: kullanıcı ad/soyad arama inputu
+  // hastalar: serverdan çekilen hasta verileri
+  // ============================
   const [arama, setArama] = useState("");
   const [hastalar, setHastalar] = useState([]);
   const navigate = useNavigate();
 
+  // ============================
+  // Hasta verilerini serverdan çekme useEffect
+  // ============================
   useEffect(() => {
     fetch("http://localhost:5001/patients", {
       credentials: "include",
@@ -19,11 +32,19 @@ const HastaListesiPage = () => {
       });
   }, []);
 
+  // ============================
+  // Arama filtresi
+  // Ad ve soyad üzerinden küçük harfe duyarlı arama
+  // ============================
   const filtrelenmisHastalar = hastalar.filter((hasta) => {
     const adSoyad = `${hasta.ad} ${hasta.soyad}`.toLowerCase();
     return adSoyad.includes(arama.toLowerCase());
   });
 
+  // ============================
+  // JSX Yapısı
+  // Navbar, arama inputu, hasta tablosu
+  // ============================
   return (
     <div style={styles.page}>
       <PersonalInfoBar2 onLogout={() => navigate("/")} />
@@ -75,6 +96,10 @@ const HastaListesiPage = () => {
   );
 };
 
+// ============================
+// Sayfa Stilleri
+// Responsive ve okunabilir tablo tasarımı
+// ============================
 const styles = {
   page: {
     fontFamily: "sans-serif",
