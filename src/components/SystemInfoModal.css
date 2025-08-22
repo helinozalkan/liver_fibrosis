@@ -1,3 +1,4 @@
+/* Modal arka plan: tüm ekranı kaplar ve merkeze hizalar */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -11,6 +12,7 @@
   z-index: 1000;
 }
 
+/* Modal kutusu: içerik alanı, gölge ve kenarlıklar */
 .modal-content {
   background-color: #f9f9f9;
   border-radius: 25px;
@@ -24,6 +26,7 @@
   overflow: hidden;
 }
 
+/* Başlık ve kapatma butonu */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -45,6 +48,7 @@
   color: #213448;
 }
 
+/* Modal içerik alanı: scroll ve içerik hizalaması */
 .modal-body {
   flex-grow: 1;
   overflow-y: auto;
@@ -54,6 +58,7 @@
   padding-bottom: 20px;
 }
 
+/* Görsel blokları */
 .modal-image-block {
   text-align: center;
   margin-bottom: 30px;
@@ -65,6 +70,7 @@
   overflow: hidden;
 }
 
+/* Carousel görseli: genişletilmiş ve gölgeli */
 .carousel-image.enlarged {
   width: 100%;
   height: 100%;
@@ -73,12 +79,14 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Görsel açıklamaları */
 .image-description {
   margin-top: 8px;
   font-size: 14px;
   color: #444;
 }
 
+/* Footer: sayfa navigasyonu ve son buton */
 .modal-footer {
   position: relative;
   display: flex;
@@ -88,6 +96,7 @@
   background: #f9f9f9;
 }
 
+/* Sayfa navigasyon butonları */
 .footer-controls-fixed {
   display: flex;
   align-items: center;
@@ -109,12 +118,14 @@
   cursor: not-allowed;
 }
 
+/* Sayfa göstergesi */
 .page-indicator {
   font-weight: bold;
   font-size: 16px;
-  color: #000; /* Sayfa yazısı artık siyah */
+  color: #000;
 }
 
+/* Son sayfa "Anladım" butonu */
 .modal-button.final-button {
   position: absolute;
   right: 20px;
