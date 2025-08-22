@@ -10,21 +10,20 @@ import base64
 import os
 import pdfplumber
 import sqlite3
-# Model paths
-RF_MODEL_PATH = r"C:\Users\sumey\Documents\GitHub\Main2\rf_model.pkl"
-SCALER_PATH = r"C:\Users\sumey\Documents\GitHub\Main2\scaler.pkl"
-CNN_MODEL_PATH = r"C:\Users\sumey\Documents\GitHub\Main2\cnn_model.h5"
-
-
+# Model dosya yolları
+RF_MODEL_PATH = r"C:\Users\ornek\Desktop\Main2\rf_model.pkl"
+SCALER_PATH = r"C:\Users\ornek\Desktop\Main2\scaler.pkl"
+CNN_MODEL_PATH = r"C:\Users\ornek\Desktop\Main2\cnn_model.h5"
+# API Keyler
 API_KEY = "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"
 API_KEY2 = "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"
-
+# CNN sınıf etiketleri
 class_labels = ['F0', 'F1', 'F2', 'F3', 'F4']
-
+# Flask uygulaması
 app = Flask(__name__)
 app.secret_key = "sır-gibi-sakla-bunu"
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-
+# Daha önce eğitilmiş scaler ve RF modeli yükleme
 with open(SCALER_PATH, "rb") as f:
     scaler = pickle.load(f)
 with open(RF_MODEL_PATH, "rb") as f:
@@ -117,16 +116,16 @@ def init_db():
         conn.commit()
         conn.close()
         print("SQLite veritabanı ve kullanıcılar oluşturuldu.")
-
+# Ana endpoint
 @app.route("/login")
 def home():
     return "Liver Fibrosis Prediction API is running!"
-
+# VLM (Görsel LLM) analiz fonksiyonu
 def get_vlm_analysis(image_path):
     try:
         with open(image_path, "rb") as img_file:
             base64_image = base64.b64encode(img_file.read()).decode("utf-8")
-
+        # VLM prompt hazırlama
         prompt = [
             {
                 "type": "image_url",
@@ -172,7 +171,7 @@ def get_vlm_analysis(image_path):
 
     except Exception as e:
         return f"VLM analysis error: {str(e)}"
-
+# Rapor ekleme endpoint
 @app.route("/add_report", methods=["POST"])
 def add_report():
     try:
@@ -185,7 +184,7 @@ def add_report():
         gender = data.get("gender")
         evre = data.get("evre")
         doctor_id = session.get("user_id")
-
+        # Eksik parametre kontrolü
         if not tc_no or not report_text or not doctor_id:
             return jsonify({"success": False, "message": "Eksik parametre veya giriş yapılmamış."}), 400
 
@@ -229,7 +228,7 @@ def add_report():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-
+# Laboratuvar verilerini çekme endpoint
 @app.route('/lab_values/<tc>', methods=['GET'])
 def get_lab_values(tc):
 
@@ -245,7 +244,7 @@ def get_lab_values(tc):
 
     results = [dict(row) for row in rows]
     return jsonify({"lab_values": results})
-
+# Laboratuvar verisi ekleme endpoint
 # Örnek: POST ile yeni laboratuvar sonucu ekleme
 @app.route("/lab_values", methods=["POST"])
 def save_lab_values():
@@ -274,7 +273,7 @@ def save_lab_values():
 
     return jsonify({"message": "Lab değerleri kaydedildi"}), 201
 
-
+# Hasta bilgilerini çekme endpoint
 @app.route("/patients/<tc>", methods=["GET"])
 def get_patient(tc):
     try:
@@ -298,7 +297,7 @@ def get_patient(tc):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+# Raporları çekme endpoint
 @app.route("/get_reports/<tc_no>", methods=["GET"])
 def get_reports(tc_no):
     try:
@@ -326,7 +325,7 @@ def get_reports(tc_no):
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-
+# Tahmin endpoint (RF + CNN + LLM + VLM)
 @app.route("/predict", methods=["POST"])
 
 def predict():
