@@ -4,15 +4,18 @@ import { FiLogOut } from "react-icons/fi";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import SystemInfoModal from "./SystemInfoModal";
 
+// Kullanıcı Bilgi ve Menü Çubuğu Bileşeni
 const PersonalInfoBar = ({ onLogout }) => {
-  const [userName, setUserName] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [passwordPopup, setPasswordPopup] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  // State tanımlamaları
+  const [userName, setUserName] = useState(""); // Kullanıcı adı
+  const [menuOpen, setMenuOpen] = useState(false); // Menü açık/kapalı durumu
+  const [passwordPopup, setPasswordPopup] = useState(false); // Şifre popup durumu
+  const [password, setPassword] = useState(""); // Şifre input değeri
+  const [error, setError] = useState(""); // Hata mesajı
+  const [showModal, setShowModal] = useState(false); // Yardım modal durumu
   const navigate = useNavigate();
 
+  // Component mount edildiğinde kullanıcı adını al ve modal kontrolü yap
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
     if (storedName) {
@@ -22,12 +25,14 @@ const PersonalInfoBar = ({ onLogout }) => {
     const hasSeenModal = localStorage.getItem(modalKey);
     if (!hasSeenModal) {
       setShowModal(true);
-      localStorage.setItem(modalKey, "true");
-    }
+      localStorage.setItem(modalKey, "true");
+    }
   }, []);
 
+  // Kullanıcının adının ilk harfi (profil simgesi için)
   const firstLetter = userName?.charAt(0).toUpperCase();
 
+  // Şifre kontrol fonksiyonu
   const handleCheckPassword = () => {
     if (password === "1234") {
       setPasswordPopup(false);
@@ -37,26 +42,6 @@ const PersonalInfoBar = ({ onLogout }) => {
     } else {
       setError("Şifre hatalı. Lütfen tekrar deneyin.");
     }
-  };
-
-  const handleLogout = () => {
-    fetch("http://localhost:5001/logout", {
-      method: "POST",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("userName");
-          setMenuOpen(false);
-          onLogout();  // App.js'deki state'i güncelle
-          navigate("/login");
-        } else {
-          alert("Çıkış yapılamadı, tekrar deneyin.");
-        }
-      })
-      .catch(() => alert("Sunucu hatası, çıkış yapılamadı."));
   };
 
   return (
@@ -74,6 +59,7 @@ const PersonalInfoBar = ({ onLogout }) => {
         position: "relative",
       }}
     >
+      {/* Logo */}
       <img
         src="/images/istun.logo.white.png"
         alt="İstun Logo"
@@ -83,6 +69,8 @@ const PersonalInfoBar = ({ onLogout }) => {
           transformOrigin: "left center",
         }}
       />
+
+      {/* Uygulama İsmi */}
       <div
         style={{
           flex: 0.3,
@@ -94,6 +82,8 @@ const PersonalInfoBar = ({ onLogout }) => {
       >
         FibroCheck
       </div>
+
+      {/* Slogan */}
       <div
         style={{
           flex: 1,
@@ -106,8 +96,9 @@ const PersonalInfoBar = ({ onLogout }) => {
         "Erken teşhis hayat kurtarır!"
       </div>
 
-      {/* Sağ: Kullanıcı menüsü */}
+      {/* Sağ Panel: Kullanıcı Menüsü */}
       <div style={{ position: "relative" }}>
+        {/* Menü başlığı ve açma/kapama */}
         <div
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
@@ -119,6 +110,7 @@ const PersonalInfoBar = ({ onLogout }) => {
             padding: "5px 10px",
           }}
         >
+          {/* Profil simgesi */}
           <div
             style={{
               width: "30px",
@@ -136,12 +128,17 @@ const PersonalInfoBar = ({ onLogout }) => {
           >
             {firstLetter}
           </div>
+
+          {/* Kullanıcı adı */}
           <div style={{ fontWeight: "bold", color: "white", marginRight: "5px" }}>
             {userName}
           </div>
+
+          {/* Menü ikonu */}
           {menuOpen ? <FaChevronUp color="white" /> : <FaChevronDown color="white" />}
         </div>
 
+        {/* Menü içerikleri */}
         {menuOpen && (
           <div
             style={{
@@ -158,18 +155,23 @@ const PersonalInfoBar = ({ onLogout }) => {
               minWidth: "170px",
             }}
           >
+            {/* Hastalarım butonu */}
             <div
               style={menuItemStyle}
-              onClick={() => setPasswordPopup(true)} // burada yönlendirme yerine popup açılıyor
+              onClick={() => setPasswordPopup(true)}
             >
               👨‍⚕️ Hastalarım
             </div>
+
+            {/* Yardım butonu */}
             <div
               style={menuItemStyle}
-              onClick={() =>setShowModal(true)}
+              onClick={() => setShowModal(true)}
             >
               ❓ Yardım
             </div>
+
+            {/* Çıkış butonu */}
             <div
               style={{ ...menuItemStyle, color: "#c0392b", fontWeight: "bold" }}
               onClick={() => {
@@ -184,117 +186,122 @@ const PersonalInfoBar = ({ onLogout }) => {
         )}
       </div>
 
-      {/* Şifre Giriş Kutusu */}
-      {/* Şifre Giriş Kutusu */}
-{passwordPopup && (
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1000,
-    }}
-  >
-    <div
-      style={{
-        backgroundColor: "white",
-        padding: "30px 30px 20px 30px",
-        borderRadius: "10px",
-        boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
-        width: "300px",
-        textAlign: "center",
-        position: "relative", // çarpı için gerekli
-      }}
-    >
-      {/* Çarpı butonu */}
-      <button
-        onClick={() => {
-          setPassword("");
-          setPasswordPopup(false);
-          setError("");
-        }}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          background: "transparent",
-          border: "none",
-          fontSize: "18px",
-          cursor: "pointer",
-          fontWeight: "bold",
-          color: "#213448",
-          lineHeight: 1,
-        }}
-        aria-label="Kapat"
-      >
-        ×
-      </button>
-
-      {/* Başlık */}
-      <h3 style={{ marginBottom: "25px", fontWeight: "bold", fontSize: "20px", color: "#213448" }}>
-        Lütfen şifrenizi giriniz
-      </h3>
-
-        <input
-  type="password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  onKeyDown={(e) => e.key === "Enter" && handleCheckPassword()}
-  style={{
-    width: "100%",
-    padding: "10px 4px",
-    borderRadius: "8px",
-    border: "1.5px solid #ccc",
-    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-    fontSize: "16px",
-    fontWeight: "500",
-    outline: "none",
-    transition: "border-color 0.3s ease, box-shadow 0.3s ease",
-  }}
-  onFocus={(e) => {
-    e.target.style.borderColor = "#213448";
-    e.target.style.boxShadow = "0 0 8px rgba(33, 52, 72, 0.6)";
-  }}
-  onBlur={(e) => {
-    e.target.style.borderColor = "#ccc";
-    e.target.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.1)";
-  }}
-/>
-
-      {error && (
-        <div style={{ color: "red", marginTop: "8px", fontSize: "14px" }}>{error}</div>
-      )}
-      <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
-        <button
-          onClick={handleCheckPassword}
+      {/* Şifre Giriş Popup */}
+      {passwordPopup && (
+        <div
           style={{
-            padding: "8px 16px",
-            borderRadius: "5px",
-            border: "none",
-            backgroundColor: "#213448",
-            color: "white",
-            fontWeight: "bold",
-            cursor: "pointer",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
           }}
         >
-          Devam
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{showModal && <SystemInfoModal onClose={() => setShowModal(false)} />}
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "30px 30px 20px 30px",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
+              width: "300px",
+              textAlign: "center",
+              position: "relative",
+            }}
+          >
+            {/* Çarpı butonu */}
+            <button
+              onClick={() => {
+                setPassword("");
+                setPasswordPopup(false);
+                setError("");
+              }}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                background: "transparent",
+                border: "none",
+                fontSize: "18px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                color: "#213448",
+                lineHeight: 1,
+              }}
+              aria-label="Kapat"
+            >
+              ×
+            </button>
 
+            {/* Başlık */}
+            <h3 style={{ marginBottom: "25px", fontWeight: "bold", fontSize: "20px", color: "#213448" }}>
+              Lütfen şifrenizi giriniz
+            </h3>
+
+            {/* Şifre input */}
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCheckPassword()}
+              style={{
+                width: "100%",
+                padding: "10px 4px",
+                borderRadius: "8px",
+                border: "1.5px solid #ccc",
+                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                fontSize: "16px",
+                fontWeight: "500",
+                outline: "none",
+                transition: "border-color 0.3s ease, box-shadow 0.3s ease",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#213448";
+                e.target.style.boxShadow = "0 0 8px rgba(33, 52, 72, 0.6)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "#ccc";
+                e.target.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.1)";
+              }}
+            />
+
+            {/* Hata mesajı */}
+            {error && (
+              <div style={{ color: "red", marginTop: "8px", fontSize: "14px" }}>{error}</div>
+            )}
+
+            {/* Devam butonu */}
+            <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={handleCheckPassword}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "5px",
+                  border: "none",
+                  backgroundColor: "#213448",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Devam
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Yardım Modal */}
+      {showModal && <SystemInfoModal onClose={() => setShowModal(false)} />}
     </div>
   );
 };
 
+// Menü öğeleri stili
 const menuItemStyle = {
   padding: "12px 16px",
   cursor: "pointer",
