@@ -5,7 +5,7 @@ English version: [README_en.md](README_en.md)
    </a>
     <h2 align="center">FibroCheck</h2>
     <p align="center">
-    Yapay Zeka Model Destekli Karaciğer Fibrozis Evreleme Uygulaması
+    Yapay Zeka Model Destekli Karaciğer Fibrozis Evreleme Sistemi
      <br/>
     <a href="https://github.com/sumeyyeagir/Main2"><strong>Belgeleri Keşfedin »</strong></a>
     <br/>
@@ -17,6 +17,7 @@ English version: [README_en.md](README_en.md)
 * [Proje Hakkında](#proje-hakkında)
 * [Kullanılan Teknolojiler](#kullanılan-teknolojiler)
 * [Kullanılan Veri Setleri](#kullanılan-veri-setleri)
+* [Web Arayüzü] (#web-arayüzü)
 * [Başlatma](#başlatma)
 * [Ekran Görüntüleri](#ekran-görüntüleri)
 * [Yol Haritası](#yol-haritası)
