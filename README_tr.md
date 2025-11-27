@@ -33,10 +33,17 @@ English version: [README_en.md](README_en.md)
 
 ![Screen Shot](readme_assets/ekran1.PNG)
 
+FibroCheck, karaciğer fibrozisinin evrelerini (**F0-F4**) non-invaziv yöntemlerle tahmin etmeyi amaçlayan iki modüllü yapay zeka tabanlı bir karar destek sistemidir.
+
 Yapay zeka modeli ile geliştirilen bu uygulamamız react ve model destekli geliştirilen ve son teknolojileri kullanan bir uygulamadır. Bu uygulama İSTÜN Yazılım Mühendisliği Bölüm Başkanı Halis Altun ve Bilgisayar Mühendisliği Bölüm Başkanı Nazlı Tokatlı rehberliğinde bilgisayar ve yazılım mühendislerinden oluşan staj ekibi tarafından geliştirilmiştir.
 
-İSTÜN'de bu projeyi geliştirerek şunu hedefledik:
-* Biyopsi sürecinin zorluğunu bildiğimiz için karaciğer fibrosiz evre tahmini ve siroz tanısında yapay zeka model destekli erken teşhis tanısı
+FibroCheck iki aşamalı modüler yapıya sahiptir:**Kan Tahlili Analizi (Structured Data)**, **Ultrason Görüntü Analizi (Imaging Data)**. Her iki modelin çıktıları birleştirilir. **LLM destekli doğal dil yorumlayıcı** aracılığıyla detaylı medikal rapor oluşturulur. Rapor hem Türkçe hem İngilizce dil seçeneklerine sahiptir.
+
+**Anahtar Kelimeler**
+`Fibrozis` • `Karaciğer Hastalığı` • `Yapay Zeka` • `CNN` • `ResNet-50` • `Random Forest` • `Ultrason` • `Kan Tahlili` • `Evre Tahmini` • `Biyopsi Alternatifi`
+
+**Neden Önemli?**
+Karaciğer biyopsisi, fibrozisin evrelendirilmesinde altın standart olsa da **invaziv, ağrılı ve riskli** bir yöntemdir. FibroCheck, biyopsi ihtiyacını azaltacak, yüksek doğrulukla çalışan bir **alternatif tanı sistemi** sunmaktadır.
    
  ## Kullanılan Teknolojiler
 
@@ -63,7 +70,27 @@ Bu verileri kullanmadan önce ön işleme gerçekleştirdik.Bu ön işleme ile:
 * Görseller 128x128 boyutuna çekilip, normalizasyon işlemine tabi tutulmuştur. 
 * Eğitim/test ayrımı %80-%20 oranında gerçekleştirilmiştir. 
 
-Daha sonrasında ise bu verilerle model eğitime başladık.
+## Web Arayüzü
+
+FibroCheck, kullanıcı dostu **web tabanlı bir arayüze** sahiptir:
+
+* **Ultrason görüntüsü yükleme alanı**
+* **Kan tahlili giriş alanları** (manuel veya otomatik doldurma)
+* **Grafiksel & istatistiksel analizler**
+* **Doktor için özelleşmiş kişisel Doktor Paneli**
+* **Not ekleme ve kişiselleştirme**
+* **Chatbot desteği**
+* **Yardım alanı**
+
+## Özellikler
+
+* Non-invaziv tanı yöntemi → biyopsi ihtiyacını azaltır
+* Kan ve görüntü verilerini birlikte analiz eder
+* %96’ya varan yüksek doğruluk
+* LLM destekli doğal dil raporlama (TR/EN)
+* Klinik karar destek sistemlerine entegre edilebilir
+* Hızlı, pratik ve kullanıcı dostu arayüz
+
  ## Başlatma
  Bu bölüm, FibroCheck uygulamasını yerel bilgisayarınızda çalıştırabilmeniz için gerekli adımları içerir.
 ### Gereksinimler
@@ -133,7 +160,15 @@ FibroCheck projesine katkı sağlamak isteyenler aşağıdaki adımları takip e
 GitHub sayfasına gidin ve feature/YeniOzellik dalı için bir pull request açın
 
 ## Geliştiriciler
-* İstün Staj Ekibi
+* **Helin ÖZALKAN**
+* **Sümeyye AĞIR**
+* **Kevser SEMİZ**
+* **Büşra İNAN**
+* **Devran ŞAHİN**
+* **Ege KUZU**
+* **Erva ERGÜL**
+* **Cengizhan KARAMAN**
+* **Kerem GÜNEY**
+* **Enes Can ÇOBAN**
 
 ## Teşekkürler
-* Bu proje geliştirilirken destek olan tüm ekip arkadaşlarıma ve mentoruma teşekkür ederim.
